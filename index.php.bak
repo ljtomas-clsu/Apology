@@ -1,0 +1,597 @@
+<?php
+// Relationship Status Logic
+$relationshipStatus = "Cold ❄️";
+$statusClass = "status-cold";
+$showConfetti = false;
+
+if (isset($_POST['peace_treaty'])) {
+    $relationshipStatus = "Healing 💛";
+    $statusClass = "status-healing";
+}
+
+if (isset($_POST['full_peace'])) {
+    $relationshipStatus = "Good Terms 💖";
+    $statusClass = "status-good";
+    $showConfetti = true;
+}
+?>
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Sa'yo 🤍</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Sacramento&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #fce4ec, #fff3e0, #fce4ec);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            color: #5d4037;
+            overflow-x: hidden;
+        }
+
+        /* Floating hearts background */
+        .floating-hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            animation: floatUp 8s ease-in infinite;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.15; }
+            90% { opacity: 0.15; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* White Flag Header */
+        .white-flag {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: fadeInDown 1s ease;
+        }
+
+        .white-flag .flag-icon {
+            font-size: 3rem;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .white-flag h1 {
+            font-family: 'Sacramento', cursive;
+            font-size: 3rem;
+            color: #e91e63;
+            margin-top: 0.5rem;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(233, 30, 99, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Apology Section */
+        .apology-section {
+            text-align: center;
+        }
+
+        .apology-section .emoji-divider {
+            font-size: 1.5rem;
+            letter-spacing: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .apology-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #6d4c41;
+            font-weight: 600;
+            padding: 0 0.5rem;
+        }
+
+        /* Status Section */
+        .status-section {
+            text-align: center;
+        }
+
+        .status-section h2 {
+            font-size: 1.1rem;
+            color: #8d6e63;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            transition: all 0.5s ease;
+        }
+
+        .status-cold .status-badge {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1565c0;
+            border: 2px solid #90caf9;
+        }
+
+        .status-healing .status-badge {
+            background: linear-gradient(135deg, #fff9c4, #fff176);
+            color: #f57f17;
+            border: 2px solid #ffee58;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        .status-good .status-badge {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+            color: #c2185b;
+            border: 2px solid #f48fb1;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            background: #f5f5f5;
+            border-radius: 50px;
+            height: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 50px;
+            transition: width 1s ease, background 1s ease;
+        }
+
+        .status-cold .progress-bar {
+            width: 15%;
+            background: linear-gradient(90deg, #90caf9, #64b5f6);
+        }
+
+        .status-healing .progress-bar {
+            width: 60%;
+            background: linear-gradient(90deg, #fff176, #ffb74d);
+        }
+
+        .status-good .progress-bar {
+            width: 100%;
+            background: linear-gradient(90deg, #f48fb1, #e91e63);
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #a1887f;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.85rem 1.8rem;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: none;
+        }
+
+        .btn-peace {
+            background: linear-gradient(135deg, #ffcc80, #ffab40);
+            color: #e65100;
+            box-shadow: 0 4px 15px rgba(255, 171, 64, 0.3);
+        }
+
+        .btn-peace:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 171, 64, 0.5);
+        }
+
+        .btn-full-peace {
+            background: linear-gradient(135deg, #f48fb1, #e91e63);
+            color: white;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+        }
+
+        .btn-full-peace:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Peace Offering Section */
+        .offerings-section h2 {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #e91e63;
+            margin-bottom: 0.5rem;
+        }
+
+        .offerings-section .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a1887f;
+            margin-bottom: 1.5rem;
+        }
+
+        .offering-list {
+            list-style: none;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .offering-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, #fce4ec, #fff3e0);
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .offering-item:hover {
+            transform: translateX(5px);
+        }
+
+        .offering-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .offering-details h3 {
+            font-size: 1rem;
+            color: #c2185b;
+            margin-bottom: 0.2rem;
+        }
+
+        .offering-details p {
+            font-size: 0.85rem;
+            color: #8d6e63;
+        }
+
+        .patch-badge {
+            margin-left: auto;
+            background: #e91e63;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 50px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Strategy Section */
+        .strategy-section h2 {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #e91e63;
+            margin-bottom: 1rem;
+        }
+
+        .strategy-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .strategy-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: #fff8e1;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .strategy-step .step-icon {
+            font-size: 1.3rem;
+        }
+
+        .step-arrow {
+            text-align: center;
+            color: #e91e63;
+            font-size: 1.2rem;
+        }
+
+        /* Closing Section */
+        .closing-section {
+            text-align: center;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        .closing-section .closing-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .closing-text {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #c2185b;
+            font-weight: 700;
+        }
+
+        .closing-sub {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #8d6e63;
+            font-style: italic;
+        }
+
+        .signature {
+            margin-top: 1.5rem;
+            font-family: 'Sacramento', cursive;
+            font-size: 2rem;
+            color: #e91e63;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            top: -10px;
+            font-size: 1.5rem;
+            animation: confettiFall 4s ease-in forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .white-flag h1 { font-size: 2.2rem; }
+            .apology-text { font-size: 1rem; }
+            .card { padding: 1.5rem; }
+            .btn { padding: 0.75rem 1.4rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Floating Hearts Background -->
+<div class="floating-hearts">
+    <?php
+    $heartEmojis = ['💕', '💗', '💖', '🩷', '🤍', '🌸'];
+    for ($i = 0; $i < 15; $i++) {
+        $left = rand(0, 100);
+        $delay = rand(0, 70) / 10;
+        $duration = rand(60, 100) / 10;
+        $emoji = $heartEmojis[array_rand($heartEmojis)];
+        echo "<span class='heart' style='left:{$left}%; animation-delay:{$delay}s; animation-duration:{$duration}s;'>{$emoji}</span>";
+    }
+    ?>
+</div>
+
+<?php if ($showConfetti): ?>
+<div class="confetti-container" id="confetti">
+    <?php
+    $confettiEmojis = ['💖', '🎉', '✨', '💕', '🩷', '🌸', '💐', '🎀', '💗'];
+    for ($i = 0; $i < 30; $i++) {
+        $left = rand(0, 100);
+        $delay = rand(0, 30) / 10;
+        $emoji = $confettiEmojis[array_rand($confettiEmojis)];
+        echo "<span class='confetti-piece' style='left:{$left}%; animation-delay:{$delay}s;'>{$emoji}</span>";
+    }
+    ?>
+</div>
+<?php endif; ?>
+
+<div class="container">
+
+    <!-- White Flag Header -->
+    <div class="white-flag">
+        <div class="flag-icon">🏳️</div>
+        <h1>Peace Offering</h1>
+    </div>
+
+    <!-- Apology Card -->
+    <div class="card apology-section">
+        <div class="emoji-divider">🕊️ ─── ✿ ─── 🕊️</div>
+        <p class="apology-text">
+            Sorry kung nahayaan ko po na maging cold tayo sa isa't isa.
+            Ayoko pong ganito tayo, namimiss ko na yung normal na tayo yung palagi tayong may 
+            kwento sa isa't - isa parehong masaya and iniisip lang ay paano pabilisin ang oras
+            para magkasaman nating dalawa.
+        </p>
+    </div>
+
+    <!-- Status Card -->
+    <div class="card status-section <?php echo $statusClass; ?>">
+        <h2>📊 Relationship Status</h2>
+
+        <div class="status-badge">
+            <?php echo $relationshipStatus; ?>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+        </div>
+        <div class="progress-labels">
+            <span>Cold ❄️</span>
+            <span>Healing 💛</span>
+            <span>Good Terms 💖</span>
+        </div>
+
+        <div class="btn-group">
+            <?php if ($statusClass === 'status-cold'): ?>
+                <form method="POST">
+                    <button type="submit" name="peace_treaty" class="btn btn-peace">
+                        🏳️ Sign Peace Treaty
+                    </button>
+                </form>
+            <?php elseif ($statusClass === 'status-healing'): ?>
+                <form method="POST">
+                    <button type="submit" name="full_peace" class="btn btn-full-peace">
+                        💖 Back to Good Terms
+                    </button>
+                </form>
+            <?php else: ?>
+                <p style="font-size: 1.1rem; color: #c2185b; font-weight: 700;">
+                    ✨ We're okay na. Salamat sa pagbigay ng chance. ✨
+                </p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Peace Offering List -->
+    <div class="card offerings-section">
+        <h2>🎁 Peace Offering</h2>
+        <p class="subtitle">Mga "patches" para ayusin ang relationship bug 🛠️</p>
+
+        <?php
+        $offerings = [
+            ['icon' => '🧋', 'name' => 'Milktea',      'desc' => 'Your favorite — para mag-warm up tayo.',       'patch' => 'PATCH #1'],
+            ['icon' => '🍟', 'name' => 'Fries',         'desc' => 'Kasi walang sad na hindi malulutas ng fries.', 'patch' => 'PATCH #2'],
+            ['icon' => '💬', 'name' => 'Quality Time',  'desc' => 'Undivided attention, walang phone.',            'patch' => 'PATCH #3'],
+            ['icon' => '🤗', 'name' => 'Yakap',         'desc' => 'Mainit para matunaw yung ice between us.',     'patch' => 'PATCH #4'],
+            ['icon' => '📝', 'name' => 'Proper Usap',   'desc' => 'No more cold shoulder — pag-usapan natin.',    'patch' => 'PATCH #5'],
+        ];
+        ?>
+
+        <ul class="offering-list">
+            <?php foreach ($offerings as $item): ?>
+                <li class="offering-item">
+                    <span class="offering-icon"><?php echo $item['icon']; ?></span>
+                    <div class="offering-details">
+                        <h3><?php echo $item['name']; ?></h3>
+                        <p><?php echo $item['desc']; ?></p>
+                    </div>
+                    <span class="patch-badge"><?php echo $item['patch']; ?></span>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+
+    <!-- Strategy Summary Card -->
+    <div class="card strategy-section">
+        <h2>🗺️ The Game Plan</h2>
+        <div class="strategy-flow">
+            <div class="strategy-step">
+                <span class="step-icon">🥶</span>
+                <span><strong>Problem:</strong> She was cold → I let it happen → We froze.</span>
+            </div>
+            <div class="step-arrow">⬇️</div>
+            <div class="strategy-step">
+                <span class="step-icon">🏳️</span>
+                <span><strong>The Fix:</strong> Break the silence first. Acknowledge my part.</span>
+            </div>
+            <div class="step-arrow">⬇️</div>
+            <div class="strategy-step">
+                <span class="step-icon">🎁</span>
+                <span><strong>The Tool:</strong> White flag message + peace offering.</span>
+            </div>
+            <div class="step-arrow">⬇️</div>
+            <div class="strategy-step">
+                <span class="step-icon">💖</span>
+                <span><strong>Outcome:</strong> Cold War → Good Terms through warmth & effort.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Closing Statement -->
+    <div class="card closing-section">
+        <div class="closing-emoji">🤍</div>
+        <p class="closing-text">
+            Hindi ko na hahayaang lumamig tayo nang ganito.<br>
+            I'm here, always.
+        </p>
+        <p class="closing-sub">
+            "Ikaw lang naman ang gusto ko. Aayusin ko 'to."
+        </p>
+        <div class="signature">— From me, para sa'yo 💌</div>
+    </div>
+
+</div>
+
+</body>
+</html>
